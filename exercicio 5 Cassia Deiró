@@ -1,0 +1,89 @@
+console.log
+function addIsAdult(person) {
+  if (!person || typeof person !== "object") {
+    throw new Error("Parâmetro inválido: esperado um objeto.");
+  }
+
+  const hasAge = "age" in person && typeof person.age === "number";
+
+  return {
+    ...person,
+    isAdult: hasAge ? person.age >= 18 : false // ou `null`, se preferir não assumir
+  };
+}
+
+// Testes:
+console.log(addIsAdult({ name: "Cássia", age: 20 })); // isAdult: true
+console.log(addIsAdult({ name: "Ana" }));             // isAdult: false
+console.log(addIsAdult({ name: "Lucas", age: "18" })); // isAdult: false (age não é número)
+function combineArrays(...arrays) {
+  const allAreArrays = arrays.every(arr => Array.isArray(arr));
+
+  if (!allAreArrays) {
+    throw new Error("Todos os argumentos devem ser arrays.");
+  }
+
+  return [].concat(...arrays); // ou arrays.flat()
+}
+
+// Testes:
+console.log(combineArrays([1, 2], [3, 4], [5]));       // [1, 2, 3, 4, 5]
+console.log(combineArrays(["a"], ["b", "c"]));         // ['a', 'b', 'c']
+// console.log(combineArrays([1, 2], "não é array"));  // Erro
+const inventory = [
+  { id: 1, name: "Smartphone", price: 500, stock: 10, category: "Eletrônicos", reviews: [4, 5, 3, 5, 4] },
+  { id: 2, name: "Notebook", price: 1200, stock: 5, category: "Eletrônicos", reviews: [5, 4, 5, 5, 3] },
+  { id: 3, name: "Camiseta", price: 25, stock: 20, category: "Vestuário", reviews: [4, 3, 4, 5] },
+  { id: 4, name: "Cafeteira", price: 100, stock: 8, category: "Cozinha", reviews: [3, 2, 5, 4, 2] },
+  { id: 5, name: "Fones de Ouvido", price: 80, stock: 15, category: "Eletrônicos", reviews: [4, 4, 5, 5, 5, 4] },
+  { id: 6, name: "Calça Jeans", price: 45, stock: 0, category: "Vestuário", reviews: [4, 3, 4] },
+  { id: 7, name: "Liquidificador", price: 70, stock: 3, category: "Cozinha", reviews: [3, 4, 3, 5] }
+];
+
+// A) Listar todos os produtos com forEach
+console.log("A) Todos os produtos:");
+inventory.forEach(product => console.log(product));
+
+// B) Filtrar produtos com stock > 0
+const inStock = inventory.filter(product => product.stock > 0);
+console.log("\nB) Produtos com estoque > 0:", inStock);
+
+// C) Filtrar "Eletrônicos" com price < 1000
+const cheapElectronics = inventory.filter(p => p.category === "Eletrônicos" && p.price < 1000);
+console.log("\nC) Eletrônicos com preço < 1000:", cheapElectronics);
+
+// D) Verificar se existe produto sem estoque
+const hasOutOfStock = inventory.some(p => p.stock === 0);
+console.log("\nD) Existe produto sem estoque?", hasOutOfStock);
+
+// E) Verificar se todos têm pelo menos 1 review
+const allHaveReviews = inventory.every(p => p.reviews.length > 0);
+console.log("\nE) Todos têm pelo menos uma review?", allHaveReviews);
+
+// F) Índice do produto "Cafeteira"
+const coffeeMakerIndex = inventory.findIndex(p => p.name === "Cafeteira");
+console.log("\nF) Índice da Cafeteira:", coffeeMakerIndex);
+
+// G) Primeiro produto da categoria "Vestuário"
+const firstClothing = inventory.find(p => p.category === "Vestuário");
+console.log("\nG) Primeiro produto de Vestuário:", firstClothing);
+
+// H) Criar função de busca com base no nome
+function searchByName(name) {
+  return inventory.filter(p => p.name.toLowerCase().includes(name.toLowerCase()));
+}
+console.log("\nH) Buscar por nome 'fone':", searchByName("fone"));
+
+// I) Calcular média das reviews e adicionar averageRating
+const withRatings = inventory.map(product => {
+  const sum = product.reviews.reduce((acc, r) => acc + r, 0);
+  const average = sum / product.reviews.length;
+  return { ...product, averageRating: average.toFixed(2) };
+});
+console.log("\nI) Produtos com média de avaliações:", withRatings);
+
+// J) Encontrar o produto com maior averageRating
+const bestRated = withRatings.reduce((max, curr) => {
+  return parseFloat(curr.averageRating) > parseFloat(max.averageRating) ? curr : max;
+});
+console.log("\nJ) Produto com melhor avaliação média:", bestRated);
